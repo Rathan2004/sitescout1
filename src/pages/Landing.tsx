@@ -93,24 +93,6 @@ export default function Landing() {
               The trusted marketplace for buying and selling profitable websites, domains, and online businesses
             </p>
             
-            <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-12">
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    type="text"
-                    placeholder="Search websites, domains, or categories..."
-                    className="pl-10 h-12"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                <Button type="submit" size="lg" className="h-12">
-                  Search
-                </Button>
-              </div>
-            </form>
-
             <div className="flex flex-wrap justify-center gap-8 text-sm">
               <div className="flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-primary" />
