@@ -3,16 +3,24 @@ import { ArrowRight, TrendingUp, Shield, Zap, Search, DollarSign, Users } from '
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CurrencySelector } from '@/components/CurrencySelector';
+import { HandlerHireDialog } from '@/components/HandlerHireDialog';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
 
 export default function Landing() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [hireDialogOpen, setHireDialogOpen] = useState(false);
+  const [selectedHandlerType, setSelectedHandlerType] = useState<string>('');
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     navigate(`/marketplace?search=${searchQuery}`);
+  };
+
+  const handleHireClick = (handlerType: string) => {
+    setSelectedHandlerType(handlerType);
+    setHireDialogOpen(true);
   };
 
   const categories = [
@@ -161,19 +169,22 @@ export default function Landing() {
                 title: 'Website Transfer Specialists',
                 description: 'Expert assistance with domain transfers, hosting migration, and ownership handoff',
                 icon: '🔄',
-                rate: 'From $50/hr'
+                rate: 'From $50/hr',
+                type: 'transfer'
               },
               {
                 title: 'Maintenance & Support',
                 description: 'Ongoing website maintenance, updates, security patches, and technical support',
                 icon: '🛠️',
-                rate: 'From $40/hr'
+                rate: 'From $40/hr',
+                type: 'maintenance'
               },
               {
                 title: 'Optimization Experts',
                 description: 'SEO optimization, performance tuning, and conversion rate improvements',
                 icon: '📈',
-                rate: 'From $60/hr'
+                rate: 'From $60/hr',
+                type: 'optimization'
               }
             ].map((handler, index) => (
               <motion.div
@@ -188,7 +199,7 @@ export default function Landing() {
                 <p className="text-muted-foreground mb-4 text-sm">{handler.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-primary">{handler.rate}</span>
-                  <Button size="sm" variant="outline" onClick={() => navigate('/auth')}>
+                  <Button size="sm" variant="outline" onClick={() => handleHireClick(handler.type)}>
                     Hire Now
                   </Button>
                 </div>
@@ -197,7 +208,7 @@ export default function Landing() {
           </div>
           
           <div className="text-center">
-            <Button size="lg" onClick={() => navigate('/auth')}>
+            <Button size="lg" onClick={() => handleHireClick('')}>
               Browse All Handlers
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -294,6 +305,12 @@ export default function Landing() {
           </div>
         </div>
       </footer>
+
+      <HandlerHireDialog
+        open={hireDialogOpen}
+        onOpenChange={setHireDialogOpen}
+        handlerType={selectedHandlerType}
+      />
     </div>
   );
 }
