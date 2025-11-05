@@ -31,12 +31,8 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Only redirect if user completes authentication during this session
-  // Don't redirect if they were already authenticated when they arrived
-  useEffect(() => {
-    // Skip the redirect check - let users access the auth page even if authenticated
-    // They might want to switch accounts or see the page
-  }, []);
+  // No automatic redirect - users can access the auth page even if authenticated
+  // Redirects only happen after successful sign-in (in handleOtpSubmit and handleGuestLogin)
 
   const handleEmailSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
