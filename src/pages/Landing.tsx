@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, TrendingUp, Shield, Zap, Search, DollarSign, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { CurrencySelector } from '@/components/CurrencySelector';
 import { HandlerHireDialog } from '@/components/HandlerHireDialog';
 import { useNavigate } from 'react-router';
@@ -151,6 +152,110 @@ export default function Landing() {
                 <p className="text-sm text-muted-foreground">{category.count} listings</p>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Plans */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Choose Your Plan</h2>
+            <p className="text-muted-foreground">Start free or unlock premium features with Pro</p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Free Plan */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-card border rounded-lg p-8"
+            >
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold mb-2">Free Plan</h3>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold">₹0</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+              </div>
+              
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-primary text-xs">✓</span>
+                  </div>
+                  <span>Up to 3 listings</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-primary text-xs">✓</span>
+                  </div>
+                  <span>Basic analytics</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-primary text-xs">✓</span>
+                  </div>
+                  <span>Email support</span>
+                </li>
+              </ul>
+              
+              <Button variant="outline" className="w-full" onClick={() => navigate('/auth')}>
+                Get Started Free
+              </Button>
+            </motion.div>
+
+            {/* Pro Plan */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-primary text-primary-foreground border-2 border-primary rounded-lg p-8 relative"
+            >
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                <Badge className="bg-secondary text-secondary-foreground">POPULAR</Badge>
+              </div>
+              
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold mb-2">Pro Plan</h3>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold">₹299</span>
+                  <span className="opacity-90">/month</span>
+                </div>
+              </div>
+              
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs">✓</span>
+                  </div>
+                  <span>Unlimited listings</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs">✓</span>
+                  </div>
+                  <span>Advanced analytics</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs">✓</span>
+                  </div>
+                  <span>Priority support</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs">✓</span>
+                  </div>
+                  <span>Featured listings</span>
+                </li>
+              </ul>
+              
+              <Button variant="secondary" className="w-full" onClick={() => navigate('/auth')}>
+                Upgrade to Pro
+              </Button>
+            </motion.div>
           </div>
         </div>
       </section>
