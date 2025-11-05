@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/input-otp";
 
 import { useAuth } from "@/hooks/use-auth";
+import { validateEmail } from "@/utils/validators";
 import { ArrowRight, Loader2, Mail, UserX } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -38,10 +39,26 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
+    
     try {
       const formData = new FormData(event.currentTarget);
+      const email = formData.get("email") as string;
+      
+      // Validate email format
+      if (!email || !email.trim()) {
+        setError("Email address is required");
+        setIsLoading(false);
+        return;
+      }
+      
+      if (!validateEmail(email)) {
+        setError("Please enter a valid email address");
+        setIsLoading(false);
+        return;
+      }
+      
       await signIn("email-otp", formData);
-      setStep({ email: formData.get("email") as string });
+      setStep({ email });
       setIsLoading(false);
     } catch (error) {
       console.error("Email sign-in error:", error);
@@ -58,6 +75,14 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
+    
+    // Validate OTP length
+    if (otp.length !== 6) {
+      setError("Please enter the complete 6-digit verification code");
+      setIsLoading(false);
+      return;
+    }
+    
     try {
       const formData = new FormData(event.currentTarget);
       await signIn("email-otp", formData);
@@ -69,7 +94,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     } catch (error) {
       console.error("OTP verification error:", error);
 
-      setError("The verification code you entered is incorrect.");
+      setError("The verification code you entered is incorrect. Please try again.");
       setIsLoading(false);
 
       setOtp("");
