@@ -101,3 +101,18 @@ export interface CreateListingData {
   images: string[];
   featuredImage: string;
 }
+
+export interface HandlerRegistration {
+  id: string;
+  userId: string;
+  name: string;
+  email: string;
+  serviceType: 'transfer' | 'maintenance' | 'optimization';
+  hourlyRate: number;
+  experience: string;
+  skills: string[];
+  bio: string;
+  portfolio?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+}

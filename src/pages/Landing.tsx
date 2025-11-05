@@ -1,23 +1,19 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, TrendingUp, Shield, Zap, Search, DollarSign, Users } from 'lucide-react';
+import { ArrowRight, TrendingUp, Shield, Zap, DollarSign, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { CurrencySelector } from '@/components/CurrencySelector';
 import { HandlerHireDialog } from '@/components/HandlerHireDialog';
+import { HandlerRegistrationDialog } from '@/components/HandlerRegistrationDialog';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
 
 export default function Landing() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
   const [hireDialogOpen, setHireDialogOpen] = useState(false);
+  const [registrationDialogOpen, setRegistrationDialogOpen] = useState(false);
   const [selectedHandlerType, setSelectedHandlerType] = useState<string>('');
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    navigate(`/marketplace?search=${searchQuery}`);
-  };
 
   const handleHireClick = (handlerType: string) => {
     setSelectedHandlerType(handlerType);
@@ -69,6 +65,9 @@ export default function Landing() {
                 How It Works
               </button>
               <CurrencySelector />
+              <Button variant="outline" onClick={() => setRegistrationDialogOpen(true)}>
+                Become a Handler
+              </Button>
               <Button onClick={() => navigate('/auth')}>Get Started</Button>
             </div>
           </div>
@@ -367,11 +366,18 @@ export default function Landing() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Categories</h3>
+              <h3 className="font-semibold mb-4">For Handlers</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">E-commerce</a></li>
-                <li><a href="#" className="hover:text-foreground">SaaS</a></li>
-                <li><a href="#" className="hover:text-foreground">Blogs</a></li>
+                <li>
+                  <button 
+                    onClick={() => setRegistrationDialogOpen(true)} 
+                    className="hover:text-foreground"
+                  >
+                    Register as Handler
+                  </button>
+                </li>
+                <li><a href="#" className="hover:text-foreground">Handler Benefits</a></li>
+                <li><a href="#" className="hover:text-foreground">Success Stories</a></li>
               </ul>
             </div>
             <div>
@@ -401,6 +407,11 @@ export default function Landing() {
         open={hireDialogOpen}
         onOpenChange={setHireDialogOpen}
         handlerType={selectedHandlerType}
+      />
+      
+      <HandlerRegistrationDialog
+        open={registrationDialogOpen}
+        onOpenChange={setRegistrationDialogOpen}
       />
     </div>
   );
