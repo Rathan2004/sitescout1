@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, TrendingUp, Shield, Zap, Search, DollarSign, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { CurrencySelector } from '@/components/CurrencySelector';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
 
@@ -58,6 +59,7 @@ export default function Landing() {
               <button className="text-sm hover:text-primary transition-colors">
                 How It Works
               </button>
+              <CurrencySelector />
               <Button onClick={() => navigate('/auth')}>Get Started</Button>
             </div>
           </div>

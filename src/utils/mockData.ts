@@ -138,6 +138,16 @@ export const currencies: Currency[] = [
   { code: 'INR', name: 'Indian Rupee', symbol: '₹', rate: 83.12 },
   { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', rate: 1.53 },
   { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', rate: 1.36 },
+  { code: 'JPY', name: 'Japanese Yen', symbol: '¥', rate: 149.50 },
+  { code: 'CNY', name: 'Chinese Yuan', symbol: '¥', rate: 7.24 },
+  { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF', rate: 0.88 },
+  { code: 'SEK', name: 'Swedish Krona', symbol: 'kr', rate: 10.52 },
+  { code: 'NZD', name: 'New Zealand Dollar', symbol: 'NZ$', rate: 1.67 },
+  { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$', rate: 1.34 },
+  { code: 'HKD', name: 'Hong Kong Dollar', symbol: 'HK$', rate: 7.83 },
+  { code: 'KRW', name: 'South Korean Won', symbol: '₩', rate: 1320.50 },
+  { code: 'MXN', name: 'Mexican Peso', symbol: 'MX$', rate: 17.15 },
+  { code: 'BRL', name: 'Brazilian Real', symbol: 'R$', rate: 5.02 },
 ];
 
 export const mockApiCall = <T,>(data: T, delay = 500): Promise<T> => {

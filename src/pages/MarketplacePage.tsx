@@ -9,6 +9,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { Listing } from '@/types';
 import { formatCurrency, formatNumber } from '@/utils/formatters';
 import { motion } from 'framer-motion';
+import { CurrencySelector } from '@/components/CurrencySelector';
 
 export default function MarketplacePage() {
   const navigate = useNavigate();
@@ -48,7 +49,10 @@ export default function MarketplacePage() {
                 />
               </div>
             </div>
-            <Button onClick={() => navigate('/auth')}>Sign In</Button>
+            <div className="flex items-center gap-2">
+              <CurrencySelector />
+              <Button onClick={() => navigate('/auth')}>Sign In</Button>
+            </div>
           </div>
         </div>
       </nav>

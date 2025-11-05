@@ -11,6 +11,7 @@ import { useFavoriteStore } from '@/store/favoriteStore';
 import { formatCurrency, formatNumber, formatDate } from '@/utils/formatters';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { CurrencySelector } from '@/components/CurrencySelector';
 
 export default function ListingDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -108,7 +109,10 @@ export default function ListingDetailPage() {
                 <span className="text-xl font-bold">WebMarket</span>
               </div>
             </div>
-            <Button onClick={() => navigate('/auth')}>Sign In</Button>
+            <div className="flex items-center gap-2">
+              <CurrencySelector />
+              <Button onClick={() => navigate('/auth')}>Sign In</Button>
+            </div>
           </div>
         </div>
       </nav>
