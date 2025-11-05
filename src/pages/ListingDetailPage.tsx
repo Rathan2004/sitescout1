@@ -12,6 +12,7 @@ import { formatCurrency, formatNumber, formatDate } from '@/utils/formatters';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { CurrencySelector } from '@/components/CurrencySelector';
+import { ChatBox } from '@/components/ChatBox';
 
 export default function ListingDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +21,7 @@ export default function ListingDetailPage() {
   const { selectedCurrency, currencies, convertPrice } = useCurrencyStore();
   const { isFavorite, addFavorite, removeFavorite } = useFavoriteStore();
   const [imageIndex, setImageIndex] = useState(0);
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -59,7 +61,7 @@ export default function ListingDetailPage() {
 
   const handleContactSeller = () => {
     if (!currentListing) return;
-    toast.info('Contact seller feature coming soon!');
+    setChatOpen(true);
   };
 
   const handleMakeOffer = () => {
@@ -349,6 +351,15 @@ export default function ListingDetailPage() {
           </motion.div>
         </div>
       </div>
+
+      {chatOpen && currentListing && (
+        <ChatBox
+          listingId={currentListing.id}
+          sellerId={currentListing.userId}
+          sellerName={currentListing.user?.name || 'Seller'}
+          onClose={() => setChatOpen(false)}
+        />
+      )}
     </div>
   );
 }

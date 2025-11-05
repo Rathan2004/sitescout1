@@ -116,3 +116,13 @@ export interface HandlerRegistration {
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
 }
+
+export interface Message {
+  id: string;
+  listingId: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  read: boolean;
+  createdAt: string;
+}

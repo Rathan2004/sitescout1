@@ -116,6 +116,17 @@ const schema = defineSchema(
       metadata: v.optional(v.string()),
     }).index("by_eventType", ["eventType"])
       .index("by_userId", ["userId"]),
+
+    // Messages table
+    messages: defineTable({
+      listingId: v.string(),
+      senderId: v.string(),
+      receiverId: v.string(),
+      content: v.string(),
+      read: v.boolean(),
+    }).index("by_listingId", ["listingId"])
+      .index("by_senderId", ["senderId"])
+      .index("by_receiverId", ["receiverId"]),
   },
   {
     schemaValidation: false,
