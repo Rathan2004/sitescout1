@@ -12,6 +12,7 @@ import "./index.css";
 import Landing from "./pages/Landing.tsx";
 import MarketplacePage from "./pages/MarketplacePage.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import AdminPanel from "./pages/AdminPanel.tsx";
 import "./types/global.d.ts";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
@@ -51,6 +52,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/listing/:id" element={<ListingDetailPage />} />
             <Route path="/auth" element={<AuthPage redirectAfterAuth="/" />} />
+            <Route path="/admin" element={<AdminPanel />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

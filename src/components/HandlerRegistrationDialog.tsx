@@ -95,7 +95,7 @@ export function HandlerRegistrationDialog({ open, onOpenChange }: HandlerRegistr
 
     setIsSubmitting(true);
     
-    // Simulate API call
+    // Simulate API call - In production, this would call a Convex mutation
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     toast.success('Registration submitted! We will review your application and contact you soon.');
