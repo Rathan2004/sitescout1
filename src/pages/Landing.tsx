@@ -103,6 +103,10 @@ export default function Landing() {
                 <span><strong>10K+</strong> active users</span>
               </div>
               <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                <span><strong>200+</strong> verified handlers & developers</span>
+              </div>
+              <div className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-primary" />
                 <span><strong>500+</strong> websites sold</span>
               </div>
@@ -246,8 +250,8 @@ export default function Landing() {
       <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Need Help Managing Your Website?</h2>
-            <p className="text-muted-foreground">Connect with verified professionals for website transfers, maintenance, and optimization</p>
+            <h2 className="text-3xl font-bold mb-4">Professional Website Handlers & Developers</h2>
+            <p className="text-muted-foreground">Connect with verified website handlers and experienced web developers for transfers, maintenance, optimization, and custom development</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-6 mb-8">
