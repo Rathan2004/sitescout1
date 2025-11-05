@@ -147,6 +147,64 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Hire Website Handlers */}
+      <section className="py-20 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Need Help Managing Your Website?</h2>
+            <p className="text-muted-foreground">Connect with verified professionals for website transfers, maintenance, and optimization</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            {[
+              {
+                title: 'Website Transfer Specialists',
+                description: 'Expert assistance with domain transfers, hosting migration, and ownership handoff',
+                icon: '🔄',
+                rate: 'From $50/hr'
+              },
+              {
+                title: 'Maintenance & Support',
+                description: 'Ongoing website maintenance, updates, security patches, and technical support',
+                icon: '🛠️',
+                rate: 'From $40/hr'
+              },
+              {
+                title: 'Optimization Experts',
+                description: 'SEO optimization, performance tuning, and conversion rate improvements',
+                icon: '📈',
+                rate: 'From $60/hr'
+              }
+            ].map((handler, index) => (
+              <motion.div
+                key={handler.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.15 }}
+                className="bg-card border rounded-lg p-6 hover:shadow-lg transition-all"
+              >
+                <div className="text-4xl mb-4">{handler.icon}</div>
+                <h3 className="text-xl font-semibold mb-2">{handler.title}</h3>
+                <p className="text-muted-foreground mb-4 text-sm">{handler.description}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-primary">{handler.rate}</span>
+                  <Button size="sm" variant="outline" onClick={() => navigate('/auth')}>
+                    Hire Now
+                  </Button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          <div className="text-center">
+            <Button size="lg" onClick={() => navigate('/auth')}>
+              Browse All Handlers
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Features */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
