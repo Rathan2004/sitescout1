@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { Search, Grid3x3, List, SlidersHorizontal } from 'lucide-react';
+import { Search, Grid3x3, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { useListingStore } from '@/store/listingStore';
 import { useCurrencyStore } from '@/store/currencyStore';
 import { useDebounce } from '@/hooks/useDebounce';
-import { Listing } from '@/types';
 import { formatCurrency, formatNumber } from '@/utils/formatters';
 import { motion } from 'framer-motion';
 import { CurrencySelector } from '@/components/CurrencySelector';
@@ -16,14 +16,15 @@ export default function MarketplacePage() {
   const [searchParams] = useSearchParams();
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+  const [listingTypeFilter, setListingTypeFilter] = useState<'all' | 'sale' | 'rent'>('all');
   const debouncedSearch = useDebounce(searchQuery, 300);
   
   const { listings, loading, fetchListings } = useListingStore();
   const { selectedCurrency, currencies, convertPrice } = useCurrencyStore();
 
   useEffect(() => {
-    fetchListings({ search: debouncedSearch });
-  }, [debouncedSearch, fetchListings]);
+    fetchListings({ search: debouncedSearch, listingType: listingTypeFilter });
+  }, [debouncedSearch, listingTypeFilter, fetchListings]);
 
   const currency = currencies.find((c) => c.code === selectedCurrency);
 
@@ -59,25 +60,53 @@ export default function MarketplacePage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Browse Websites</h1>
-            <p className="text-muted-foreground">{listings.length} listings found</p>
+        <div className="flex flex-col gap-4 mb-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Browse Websites</h1>
+              <p className="text-muted-foreground">{listings.length} listings found</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant={view === 'grid' ? 'default' : 'outline'}
+                size="icon"
+                onClick={() => setView('grid')}
+              >
+                <Grid3x3 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={view === 'list' ? 'default' : 'outline'}
+                size="icon"
+                onClick={() => setView('list')}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
+          
+          {/* Listing Type Filter */}
           <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Filter by:</span>
             <Button
-              variant={view === 'grid' ? 'default' : 'outline'}
-              size="icon"
-              onClick={() => setView('grid')}
+              variant={listingTypeFilter === 'all' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setListingTypeFilter('all')}
             >
-              <Grid3x3 className="h-4 w-4" />
+              All Listings
             </Button>
             <Button
-              variant={view === 'list' ? 'default' : 'outline'}
-              size="icon"
-              onClick={() => setView('list')}
+              variant={listingTypeFilter === 'sale' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setListingTypeFilter('sale')}
             >
-              <List className="h-4 w-4" />
+              For Sale
+            </Button>
+            <Button
+              variant={listingTypeFilter === 'rent' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setListingTypeFilter('rent')}
+            >
+              For Rent
             </Button>
           </div>
         </div>
@@ -99,16 +128,23 @@ export default function MarketplacePage() {
                 onClick={() => navigate(`/listing/${listing.id}`)}
                 className="bg-card border rounded-lg overflow-hidden cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all"
               >
-                {listing.featured && (
-                  <div className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1">
-                    FEATURED
+                <div className="relative">
+                  <img
+                    src={listing.featuredImage}
+                    alt={listing.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute top-2 right-2 flex gap-2">
+                    {listing.featured && (
+                      <Badge className="bg-primary text-primary-foreground">
+                        FEATURED
+                      </Badge>
+                    )}
+                    <Badge variant={listing.listingType === 'sale' ? 'default' : 'secondary'}>
+                      {listing.listingType === 'sale' ? 'FOR SALE' : 'FOR RENT'}
+                    </Badge>
                   </div>
-                )}
-                <img
-                  src={listing.featuredImage}
-                  alt={listing.title}
-                  className="w-full h-48 object-cover"
-                />
+                </div>
                 <div className="p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
@@ -142,11 +178,16 @@ export default function MarketplacePage() {
                     )}
                   </div>
                   <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold text-primary">
-                      {formatCurrency(
-                        convertPrice(listing.price, listing.currency, selectedCurrency),
-                        selectedCurrency,
-                        currency?.symbol || '$'
+                    <div>
+                      <div className="text-2xl font-bold text-primary">
+                        {formatCurrency(
+                          convertPrice(listing.price, listing.currency, selectedCurrency),
+                          selectedCurrency,
+                          currency?.symbol || '$'
+                        )}
+                      </div>
+                      {listing.listingType === 'rent' && (
+                        <p className="text-xs text-muted-foreground">per month</p>
                       )}
                     </div>
                     <Button size="sm">View Details</Button>

@@ -35,6 +35,10 @@ export const useListingStore = create<ListingState>((set, get) => ({
       filtered = filtered.filter((l) => filters.category!.includes(l.category));
     }
     
+    if (filters?.listingType && filters.listingType !== 'all') {
+      filtered = filtered.filter((l) => l.listingType === filters.listingType);
+    }
+    
     const result = await mockApiCall(filtered, 800);
     set({ listings: result, loading: false });
   },
