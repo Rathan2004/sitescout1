@@ -8,9 +8,11 @@ import { HandlerHireDialog } from '@/components/HandlerHireDialog';
 import { HandlerRegistrationDialog } from '@/components/HandlerRegistrationDialog';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function Landing() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [hireDialogOpen, setHireDialogOpen] = useState(false);
   const [registrationDialogOpen, setRegistrationDialogOpen] = useState(false);
   const [selectedHandlerType, setSelectedHandlerType] = useState<string>('');
@@ -68,7 +70,9 @@ export default function Landing() {
               <Button variant="outline" onClick={() => setRegistrationDialogOpen(true)}>
                 Become a Handler
               </Button>
-              <Button onClick={() => navigate('/auth')}>Get Started</Button>
+              <Button onClick={() => navigate(isAuthenticated ? '/marketplace' : '/auth')}>
+                {isAuthenticated ? 'Browse Marketplace' : 'Get Started'}
+              </Button>
             </div>
           </div>
         </div>
@@ -186,8 +190,8 @@ export default function Landing() {
                 </li>
               </ul>
               
-              <Button variant="outline" className="w-full" onClick={() => navigate('/auth')}>
-                Get Started Free
+              <Button variant="outline" className="w-full" onClick={() => navigate(isAuthenticated ? '/marketplace' : '/auth')}>
+                {isAuthenticated ? 'Browse Marketplace' : 'Get Started Free'}
               </Button>
             </motion.div>
 
@@ -237,8 +241,8 @@ export default function Landing() {
                 </li>
               </ul>
               
-              <Button variant="secondary" className="w-full" onClick={() => navigate('/auth')}>
-                Upgrade to Pro
+              <Button variant="secondary" className="w-full" onClick={() => navigate(isAuthenticated ? '/marketplace' : '/auth')}>
+                {isAuthenticated ? 'Browse Marketplace' : 'Upgrade to Pro'}
               </Button>
             </motion.div>
           </div>
@@ -346,8 +350,8 @@ export default function Landing() {
               Browse Listings
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/auth')} className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary cursor-pointer">
-              Start Selling
+            <Button size="lg" variant="outline" onClick={() => navigate(isAuthenticated ? '/marketplace' : '/auth')} className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary cursor-pointer">
+              {isAuthenticated ? 'Go to Marketplace' : 'Start Selling'}
             </Button>
           </div>
         </div>
