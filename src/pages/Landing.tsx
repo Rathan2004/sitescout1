@@ -55,7 +55,7 @@ export default function Landing() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
               <img src="/logo.svg" alt="Logo" className="h-8 w-8" />
-              <span className="text-xl font-bold">WebMarket</span>
+              <span className="text-xl font-bold">SiteScout</span>
             </div>
             <div className="hidden md:flex items-center gap-6">
               <button onClick={() => navigate('/marketplace')} className="text-sm hover:text-primary transition-colors">
@@ -310,7 +310,7 @@ export default function Landing() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Choose WebMarket?</h2>
+                  <h2 className="text-3xl font-bold mb-4">Why Choose SiteScout?</h2>
             <p className="text-muted-foreground">The safest and easiest way to buy and sell websites</p>
           </div>
           
@@ -398,7 +398,7 @@ export default function Landing() {
             </div>
           </div>
           <div className="border-t pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2024 WebMarket. All rights reserved.</p>
+            <p>&copy; 2024 SiteScout. All rights reserved.</p>
           </div>
         </div>
       </footer>

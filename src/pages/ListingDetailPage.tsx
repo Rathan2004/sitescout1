@@ -108,7 +108,7 @@ export default function ListingDetailPage() {
               </Button>
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
                 <img src="/logo.svg" alt="Logo" className="h-8 w-8" />
-                <span className="text-xl font-bold">WebMarket</span>
+                <span className="text-xl font-bold">SiteScout</span>
               </div>
             </div>
             <div className="flex items-center gap-2">
