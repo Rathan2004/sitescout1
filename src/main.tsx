@@ -3,6 +3,7 @@ import { VlyToolbar } from "../vly-toolbar-readonly.tsx";
 import { InstrumentationProvider } from "@/instrumentation.tsx";
 import AuthPage from "@/pages/Auth.tsx";
 import ListingDetailPage from "@/pages/ListingDetailPage.tsx";
+import CreateListingPage from "@/pages/CreateListingPage.tsx";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
 import { StrictMode, useEffect } from "react";
@@ -51,6 +52,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/" element={<Landing />} />
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/listing/:id" element={<ListingDetailPage />} />
+            <Route path="/create-listing" element={<CreateListingPage />} />
             <Route path="/auth" element={<AuthPage redirectAfterAuth="/" />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="*" element={<NotFound />} />
