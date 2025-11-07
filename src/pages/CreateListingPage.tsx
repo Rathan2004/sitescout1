@@ -214,10 +214,10 @@ export default function CreateListingPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="domain">Domain *</Label>
+                  <Label htmlFor="domain">Website URL *</Label>
                   <Input
                     id="domain"
-                    placeholder="example.com"
+                    placeholder="https://example.com"
                     value={formData.domain}
                     onChange={(e) => handleChange('domain', e.target.value)}
                     className={errors.domain ? 'border-red-500' : ''}
