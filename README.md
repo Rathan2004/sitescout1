@@ -1,34 +1,213 @@
+# SiteScout - Website Marketplace Platform
+
 ## Overview
+SiteScout is a comprehensive online marketplace for buying, selling, and renting websites. The platform features secure authentication, real-time messaging, currency conversion, and a network of verified website handlers.
 
-This project uses the following tech stack:
-- Vite
-- Typescript
-- React Router v7 (all imports from `react-router` instead of `react-router-dom`)
-- React 19 (for frontend components)
-- Tailwind v4 (for styling)
-- Shadcn UI (for UI components library)
-- Lucide Icons (for icons)
-- Convex (for backend & database)
-- Convex Auth (for authentication)
-- Framer Motion (for animations)
-- Three js (for 3d models)
+## Tech Stack
+- **Frontend**: React, TypeScript, Tailwind CSS, Shadcn UI, Framer Motion
+- **Backend**: Convex (serverless backend with real-time database)
+- **Authentication**: Convex Auth with Email OTP and Guest Login
+- **Routing**: React Router v7
+- **State Management**: Zustand (for client-side state)
 
-All relevant files live in the 'src' directory.
+## Key Features
 
-Use pnpm for the package manager.
+### 1. Authentication System
+- Email OTP authentication with form validation
+- Guest login support
+- Secure session management
+- No automatic redirects - users control navigation
 
-## Setup
+### 2. Marketplace
+- Browse active listings with filters (search, category, listing type, price range)
+- Real-time listing updates
+- Detailed listing pages with metrics (revenue, traffic, domain age, authority)
+- Image galleries for listings
+- Favorites system (localStorage-based)
 
-This project is set up already and running on a cloud environment, as well as a convex development in the sandbox.
+### 3. Messaging System
+- Real-time buyer-seller chat via Convex
+- Message read status tracking
+- Conversation history
+- Floating chat interface
+
+### 4. Handler Network
+- Handler registration with validation
+- Service types: Transfer, Maintenance, Optimization
+- Admin approval workflow
+- Handler profiles with skills, rates, and experience
+
+### 5. Currency Support
+- 16 global currencies supported
+- Real-time price conversion
+- Persistent currency selection (localStorage)
+
+### 6. Admin Panel
+- Platform statistics dashboard
+- User management
+- Listing moderation
+- Transaction oversight
+- Handler approval system
+- Analytics tracking
+
+### 7. Analytics
+- Event tracking (views, registrations, transactions)
+- Platform-wide metrics
+- User activity monitoring
+
+## Backend Functions (Convex)
+
+### Listings (`src/convex/listings.ts`)
+- `createListing` - Create new listing (authenticated)
+- `getListings` - Get filtered listings
+- `getListingById` - Get single listing with user info
+- `incrementViews` - Track listing views
+- `updateListing` - Update own listing
+- `deleteListing` - Delete own listing
+- `getUserListings` - Get user's listings
+
+### Handlers (`src/convex/handlers.ts`)
+- `registerHandler` - Submit handler application
+- `getApprovedHandlers` - Get approved handlers by service type
+
+### Transactions (`src/convex/transactions.ts`)
+- `createTransaction` - Initiate transaction
+- `getBuyerTransactions` - Get purchases
+- `getSellerTransactions` - Get sales
+- `updateTransactionStatus` - Update transaction state
+
+### Messages (`src/convex/messages.ts`)
+- `sendMessage` - Send message in conversation
+- `getConversation` - Get messages between users
+- `markAsRead` - Mark messages as read
+- `getUnreadCount` - Get unread message count
+
+### Admin (`src/convex/admin.ts`)
+- `getAllUsers` - Get all users (admin only)
+- `getAllListings` - Get all listings (admin only)
+- `getAllTransactions` - Get all transactions (admin only)
+- `getAllHandlerRegistrations` - Get handler applications (admin only)
+- `updateHandlerStatus` - Approve/reject handlers (admin only)
+- `getPlatformStats` - Get platform statistics (admin only)
+
+### Analytics (`src/convex/analytics.ts`)
+- `trackEvent` - Track platform events
+- `getAnalyticsSummary` - Get analytics summary
+- `getEventsByType` - Get events by type
+
+### Users (`src/convex/users.ts`)
+- `currentUser` - Get current authenticated user
+
+## Database Schema
+
+### Tables
+- **users** - User accounts with roles (admin, user, member)
+- **listings** - Website listings with metrics and status
+- **handlerRegistrations** - Handler applications with approval status
+- **transactions** - Purchase/rental transactions
+- **emailNotifications** - Email queue for notifications
+- **analytics** - Event tracking data
+- **messages** - Real-time messaging between users
+
+## Pages
+
+### Landing (`/`)
+- Hero section with platform stats
+- Category browsing
+- Pricing plans (Free & Pro)
+- Handler services showcase
+- Feature highlights
+- Newsletter signup
+
+### Marketplace (`/marketplace`)
+- Listing grid/list view
+- Search and filters
+- Listing type toggle (All/Sale/Rent)
+- Currency selector
+- Responsive design
+
+### Listing Detail (`/listing/:id`)
+- Image gallery
+- Detailed metrics
+- Seller information
+- Contact seller (opens chat)
+- Make offer functionality
+- Favorite/share actions
+
+### Auth (`/auth`)
+- Email OTP flow with validation
+- Guest login option
+- Error handling
+- Redirect after successful auth
+
+### Admin Panel (`/admin`)
+- Platform statistics
+- User management
+- Listing moderation
+- Transaction monitoring
+- Handler approval
+- Analytics dashboard
+
+## Current Status
+
+### ✅ Completed
+- Authentication system with validation
+- Backend functions for listings, handlers, transactions, messages
+- Real-time messaging system
+- Currency conversion
+- Admin panel with full CRUD
+- Analytics tracking
+- Handler registration flow
+- Responsive UI design
+
+### 🚧 In Progress
+- Integration of Convex backend with frontend stores
+- Transaction payment processing
+- Email notification system
+- File upload for listing images
+
+### 📋 TODO
+- Replace mock data with Convex queries/mutations
+- Implement listing creation form
+- Add payment gateway integration
+- Build user dashboard
+- Implement offer system
+- Add search indexing
+- Set up email service integration
+- Add image upload to Convex storage
+
+## Development Notes
+
+### Authentication
+- Auth redirects only occur after successful sign-in
+- Users can access auth page even when authenticated
+- Form validation prevents invalid submissions
+
+### Data Flow
+- Frontend currently uses Zustand stores with mock data
+- Backend Convex functions are ready for integration
+- Need to replace store calls with Convex hooks (useQuery, useMutation)
+
+### Security
+- All mutations check authentication
+- Admin functions verify admin role
+- Users can only modify their own resources
+- Input validation on both frontend and backend
 
 ## Environment Variables
+- `VITE_CONVEX_URL` - Convex deployment URL
+- `CONVEX_SITE_URL` - Site URL for auth
+- `VLY_APP_NAME` - Application name for emails
+
+## Getting Started
+
+This project is set up already and running on a cloud environment, as well as a convex development in the sandbox.
 
 The project is set up with project specific CONVEX_DEPLOYMENT and VITE_CONVEX_URL environment variables on the client side.
 
 The convex server has a separate set of environment variables that are accessible by the convex backend.
 
 Currently, these variables include auth-specific keys: JWKS, JWT_PRIVATE_KEY, and SITE_URL.
-
 
 # Using Authentication (Important!)
 
@@ -101,7 +280,6 @@ Follow these conventions when using Shad CN components, which you should use by 
 - AVOID SHADOWS. Avoid adding any shadows to components. stick with a thin border without the shadow.
 - Avoid skeletons; instead, use the loader2 component to show a spinning loading state when loading data.
 
-
 ## Landing Pages
 
 You must always create good-looking designer-level styles to your application. 
@@ -127,7 +305,6 @@ You must add animations to components using Framer Motion. It is already install
 
 To use it, import the `motion` component from `framer-motion` and use it to wrap the component you want to animate.
 
-
 ### Other Items to animate
 - Fade in and Fade Out
 - Slide in and Slide Out animations
@@ -139,7 +316,6 @@ Animate for all components, including on landing page and app pages.
 ## Three JS Graphics
 
 Your app comes with three js by default. You can use it to create 3D graphics for landing pages, games, etc.
-
 
 ## Colors
 
@@ -214,7 +390,6 @@ The schema is defined in `src/convex/schema.ts`.
 Do not include the `_id` and `_creationTime` fields in your queries (it is included by default for each table).
 Do not index `_creationTime` as it is indexed for you. Never have duplicate indexes.
 
-
 ## Convex Actions: Using CRUD operations
 
 When running anything that involves external connections, you must use a convex action with "use node" at the top of the file.
@@ -240,7 +415,6 @@ await ctx.runMutation(internal.users.update, {
   },
 });
 ```
-
 
 ## Common Convex Mistakes To Avoid
 

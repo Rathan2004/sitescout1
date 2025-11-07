@@ -95,25 +95,41 @@ export function HandlerRegistrationDialog({ open, onOpenChange }: HandlerRegistr
 
     setIsSubmitting(true);
     
-    // Simulate API call - In production, this would call a Convex mutation
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    toast.success('Registration submitted! We will review your application and contact you soon.');
-    setIsSubmitting(false);
-    onOpenChange(false);
-    
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      serviceType: '',
-      hourlyRate: '',
-      experience: '',
-      skills: '',
-      bio: '',
-      portfolio: '',
-    });
-    setErrors({});
+    try {
+      // TODO: Replace with actual Convex mutation call
+      // const registrationId = await registerHandler({
+      //   name: formData.name,
+      //   email: formData.email,
+      //   serviceType: formData.serviceType as "transfer" | "maintenance" | "optimization",
+      //   hourlyRate: Number(formData.hourlyRate),
+      //   experience: formData.experience,
+      //   skills: formData.skills.split(',').map(s => s.trim()),
+      //   bio: formData.bio,
+      //   portfolio: formData.portfolio || undefined,
+      // });
+      
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      toast.success('Registration submitted! We will review your application and contact you soon.');
+      setIsSubmitting(false);
+      onOpenChange(false);
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        serviceType: '',
+        hourlyRate: '',
+        experience: '',
+        skills: '',
+        bio: '',
+        portfolio: '',
+      });
+      setErrors({});
+    } catch (error) {
+      toast.error('Failed to submit registration. Please try again.');
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (field: string, value: string) => {
