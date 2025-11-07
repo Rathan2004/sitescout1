@@ -75,9 +75,16 @@ export default function CreateListingPage() {
     }
 
     if (!formData.domain.trim()) {
-      newErrors.domain = 'Domain is required';
-    } else if (!/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?\.[a-zA-Z]{2,}$/.test(formData.domain)) {
-      newErrors.domain = 'Please enter a valid domain (e.g., example.com)';
+      newErrors.domain = 'Website URL is required';
+    } else {
+      try {
+        const url = new URL(formData.domain.startsWith('http') ? formData.domain : `https://${formData.domain}`);
+        if (!url.hostname) {
+          newErrors.domain = 'Please enter a valid website URL';
+        }
+      } catch {
+        newErrors.domain = 'Please enter a valid website URL (e.g., https://example.com)';
+      }
     }
 
     if (!formData.price) {
