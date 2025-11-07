@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/use-auth';
 import { useNavigate } from 'react-router';
-import { LogOut, User, Settings } from 'lucide-react';
+import { LogOut, User, Settings, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -53,6 +53,10 @@ export function UserProfileDropdown() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => navigate('/create-listing')} className="cursor-pointer">
+          <Plus className="mr-2 h-4 w-4" />
+          <span>Create Listing</span>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => navigate('/profile')} className="cursor-pointer">
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>

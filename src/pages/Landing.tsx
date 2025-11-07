@@ -70,6 +70,11 @@ export default function Landing() {
               <Button variant="outline" onClick={() => setRegistrationDialogOpen(true)}>
                 Become a Handler
               </Button>
+              {isAuthenticated && (
+                <Button variant="default" onClick={() => navigate('/create-listing')}>
+                  Create Listing
+                </Button>
+              )}
               <Button onClick={() => navigate(isAuthenticated ? '/marketplace' : '/auth')}>
                 {isAuthenticated ? 'Browse Marketplace' : 'Get Started'}
               </Button>
