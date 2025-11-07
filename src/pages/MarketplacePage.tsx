@@ -10,6 +10,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { formatCurrency, formatNumber } from '@/utils/formatters';
 import { motion } from 'framer-motion';
 import { CurrencySelector } from '@/components/CurrencySelector';
+import { UserProfileDropdown } from '@/components/LogoDropdown';
 
 export default function MarketplacePage() {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ export default function MarketplacePage() {
             </div>
             <div className="flex items-center gap-2">
               <CurrencySelector />
-              <Button onClick={() => navigate('/auth')}>Sign In</Button>
+              <UserProfileDropdown />
             </div>
           </div>
         </div>
