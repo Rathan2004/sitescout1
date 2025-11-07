@@ -1,12 +1,88 @@
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
-import { ArrowLeft, Users, FileText, DollarSign, Shield } from "lucide-react";
+import { ArrowLeft, Users, FileText, DollarSign, Shield, Check, X } from "lucide-react";
 import { formatCurrency, formatDate } from "@/utils/formatters";
+import { toast } from "sonner";
+import { Id } from "@/convex/_generated/dataModel";
+import { useState } from "react";
+
+function HandlerRegistrationItem({ handler }: { handler: any }) {
+  const updateHandlerStatus = useMutation(api.admin.updateHandlerStatus);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleApprove = async () => {
+    setIsUpdating(true);
+    try {
+      await updateHandlerStatus({
+        registrationId: handler._id as Id<"handlerRegistrations">,
+        status: "approved",
+      });
+      toast.success(`${handler.name} has been approved!`);
+    } catch (error) {
+      toast.error("Failed to approve handler");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleReject = async () => {
+    setIsUpdating(true);
+    try {
+      await updateHandlerStatus({
+        registrationId: handler._id as Id<"handlerRegistrations">,
+        status: "rejected",
+      });
+      toast.success(`${handler.name} has been rejected`);
+    } catch (error) {
+      toast.error("Failed to reject handler");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-between border-b pb-4">
+      <div className="flex-1">
+        <p className="font-semibold">{handler.name}</p>
+        <p className="text-sm text-muted-foreground">{handler.email}</p>
+        <p className="text-xs text-muted-foreground capitalize">{handler.serviceType}</p>
+        <p className="text-xs text-muted-foreground">${handler.hourlyRate}/hr • {handler.experience} years exp</p>
+      </div>
+      <div className="flex items-center gap-2">
+        <Badge variant={handler.status === 'approved' ? 'default' : handler.status === 'rejected' ? 'destructive' : 'secondary'}>
+          {handler.status}
+        </Badge>
+        {handler.status === 'pending' && (
+          <>
+            <Button
+              size="sm"
+              variant="default"
+              onClick={handleApprove}
+              disabled={isUpdating}
+            >
+              <Check className="h-4 w-4 mr-1" />
+              Approve
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={handleReject}
+              disabled={isUpdating}
+            >
+              <X className="h-4 w-4 mr-1" />
+              Reject
+            </Button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function AdminPanel() {
   const navigate = useNavigate();
@@ -227,16 +303,10 @@ export default function AdminPanel() {
               <CardContent>
                 <div className="space-y-4">
                   {handlers.map((handler) => (
-                    <div key={handler._id} className="flex items-center justify-between border-b pb-4">
-                      <div>
-                        <p className="font-semibold">{handler.name}</p>
-                        <p className="text-sm text-muted-foreground">{handler.email}</p>
-                        <p className="text-xs text-muted-foreground capitalize">{handler.serviceType}</p>
-                      </div>
-                      <Badge variant={handler.status === 'approved' ? 'default' : handler.status === 'rejected' ? 'destructive' : 'secondary'}>
-                        {handler.status}
-                      </Badge>
-                    </div>
+                    <HandlerRegistrationItem 
+                      key={handler._id} 
+                      handler={handler}
+                    />
                   ))}
                 </div>
               </CardContent>
