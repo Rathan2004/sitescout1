@@ -89,8 +89,11 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
 
       console.log("signed in");
 
-      const redirect = redirectAfterAuth || "/";
-      navigate(redirect);
+      // Small delay to ensure auth state is updated
+      setTimeout(() => {
+        const redirect = redirectAfterAuth || "/";
+        navigate(redirect);
+      }, 100);
     } catch (error) {
       console.error("OTP verification error:", error);
 
