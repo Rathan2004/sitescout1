@@ -20,6 +20,7 @@ export default function CreateListingPage() {
   const createListing = useMutation(api.listings.createListing);
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
