@@ -9,6 +9,8 @@ import { HandlerRegistrationDialog } from '@/components/HandlerRegistrationDialo
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -16,6 +18,8 @@ export default function Landing() {
   const [hireDialogOpen, setHireDialogOpen] = useState(false);
   const [registrationDialogOpen, setRegistrationDialogOpen] = useState(false);
   const [selectedHandlerType, setSelectedHandlerType] = useState<string>('');
+  const [showAllHandlers, setShowAllHandlers] = useState(false);
+  const approvedHandlers = useQuery(api.handlers.getApprovedHandlers, {});
 
   const handleHireClick = (handlerType: string) => {
     setSelectedHandlerType(handlerType);
@@ -307,7 +311,7 @@ export default function Landing() {
           </div>
           
           <div className="text-center">
-            <Button size="lg" onClick={() => handleHireClick('')}>
+            <Button size="lg" onClick={() => navigate('/marketplace?tab=handlers')}>
               Browse All Handlers
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
