@@ -20,6 +20,8 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { validateEmail } from '@/utils/validators';
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 
 interface HandlerRegistrationDialogProps {
   open: boolean;
@@ -27,6 +29,7 @@ interface HandlerRegistrationDialogProps {
 }
 
 export function HandlerRegistrationDialog({ open, onOpenChange }: HandlerRegistrationDialogProps) {
+  const registerHandler = useMutation(api.handlers.registerHandler);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -96,19 +99,16 @@ export function HandlerRegistrationDialog({ open, onOpenChange }: HandlerRegistr
     setIsSubmitting(true);
     
     try {
-      // TODO: Replace with actual Convex mutation call
-      // const registrationId = await registerHandler({
-      //   name: formData.name,
-      //   email: formData.email,
-      //   serviceType: formData.serviceType as "transfer" | "maintenance" | "optimization",
-      //   hourlyRate: Number(formData.hourlyRate),
-      //   experience: formData.experience,
-      //   skills: formData.skills.split(',').map(s => s.trim()),
-      //   bio: formData.bio,
-      //   portfolio: formData.portfolio || undefined,
-      // });
-      
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await registerHandler({
+        name: formData.name,
+        email: formData.email,
+        serviceType: formData.serviceType as "transfer" | "maintenance" | "optimization",
+        hourlyRate: Number(formData.hourlyRate),
+        experience: formData.experience,
+        skills: formData.skills.split(',').map(s => s.trim()),
+        bio: formData.bio,
+        portfolio: formData.portfolio || undefined,
+      });
       
       toast.success('Registration submitted! We will review your application and contact you soon.');
       setIsSubmitting(false);
