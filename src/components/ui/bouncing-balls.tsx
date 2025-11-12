@@ -58,8 +58,13 @@ export const BouncingBalls: FC<BouncingBallsProps> = ({
     const ctx = canvas.getContext("2d", { alpha: true })
     if (!ctx) return
 
-    let W = (canvas.width = window.innerWidth)
-    let H = (canvas.height = window.innerHeight)
+    const updateCanvasSize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+      return { width: canvas.width, height: canvas.height }
+    }
+
+    let { width: W, height: H } = updateCanvasSize()
 
     const getRandomColor = (): string => {
       if (colors && colors.length > 0) {
@@ -180,8 +185,14 @@ export const BouncingBalls: FC<BouncingBallsProps> = ({
     animate()
 
     const handleResize = () => {
-      W = canvas.width = window.innerWidth
-      H = canvas.height = window.innerHeight
+      const size = updateCanvasSize()
+      W = size.width
+      H = size.height
+      // Reposition balls that are now out of bounds
+      balls.forEach(ball => {
+        if (ball.x > W) ball.x = W - ball.radius
+        if (ball.y > H) ball.y = H - ball.radius
+      })
     }
     window.addEventListener("resize", handleResize)
 
@@ -211,9 +222,12 @@ export const BouncingBalls: FC<BouncingBallsProps> = ({
     <canvas
       ref={canvasRef}
       style={{
-        display: "block",
+        position: "absolute",
+        top: 0,
+        left: 0,
         width: "100%",
         height: "100%",
+        display: "block",
         backgroundColor,
       }}
     />
