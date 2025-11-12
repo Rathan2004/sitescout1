@@ -1,243 +1,221 @@
-"use client";
-import { useEffect, useRef } from "react";
+"use client"
+import { useEffect, useRef, type FC } from "react"
 
 interface Ball {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  radius: number;
-  color: string;
-  baseRadius: number;
-  pulsePhase: number;
-  hue: number;
-  trail: Array<{ x: number; y: number; alpha: number }>;
+  fillColor: string
+  radius: number
+  x: number
+  y: number
+  scaleX: number
+  scaleY: number
+  rotation: number
+  vx: number
+  vy: number
+  draw: (ctx: CanvasRenderingContext2D) => void
 }
 
 interface BouncingBallsProps {
-  ballCount?: number;
-  colors?: string[];
-  minRadius?: number;
-  maxRadius?: number;
-  gravity?: number;
-  friction?: number;
-  mouseInteraction?: boolean;
-  className?: string;
-  enablePulse?: boolean;
-  enableColorShift?: boolean;
-  enableTrails?: boolean;
+  numBalls?: number
+  backgroundColor?: string
+  colors?: string[]
+  opacity?: number
+  minRadius?: number
+  maxRadius?: number
+  speed?: number
+  bounceDamping?: number
+  gravity?: number
+  friction?: number
+  interactionRadius?: number
+  interactionScale?: number
+  interactive?: boolean
+  followMouse?: boolean
+  trailAlpha?: number
 }
 
-export function BouncingBalls({
-  ballCount = 20,
-  colors = ["#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981"],
-  minRadius = 10,
-  maxRadius = 30,
-  gravity = 0.5,
-  friction = 0.99,
-  mouseInteraction = true,
-  className = "",
-  enablePulse = true,
-  enableColorShift = true,
-  enableTrails = true,
-}: BouncingBallsProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const ballsRef = useRef<Ball[]>([]);
-  const mouseRef = useRef({ x: 0, y: 0, radius: 100 });
-  const animationFrameRef = useRef<number | undefined>(undefined);
-  const timeRef = useRef(0);
+export const BouncingBalls: FC<BouncingBallsProps> = ({
+  numBalls = 150,
+  backgroundColor = "transparent",
+  colors,
+  opacity = 1,
+  minRadius = 0.4,
+  maxRadius = 2,
+  speed = 0.5,
+  bounceDamping = 1,
+  gravity = 0,
+  friction = 1,
+  interactionRadius = 100,
+  interactionScale = 4,
+  interactive = true,
+  followMouse = false,
+  trailAlpha = 1,
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const canvas = canvasRef.current
+    if (!canvas) return
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const ctx = canvas.getContext("2d", { alpha: true })
+    if (!ctx) return
 
-    // Set canvas size
-    const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      // Initialize balls
-      ballsRef.current = [];
-      for (let i = 0; i < ballCount; i++) {
-        const radius = Math.random() * (maxRadius - minRadius) + minRadius;
-        const hue = Math.random() * 360;
-        ballsRef.current.push({
-          x: Math.random() * (canvas.width - radius * 2) + radius,
-          y: Math.random() * (canvas.height - radius * 2) + radius,
-          vx: (Math.random() - 0.5) * 4,
-          vy: (Math.random() - 0.5) * 4,
-          radius,
-          baseRadius: radius,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          pulsePhase: Math.random() * Math.PI * 2,
-          hue,
-          trail: [],
-        });
+    let W = (canvas.width = window.innerWidth)
+    let H = (canvas.height = window.innerHeight)
+
+    const getRandomColor = (): string => {
+      if (colors && colors.length > 0) {
+        return colors[Math.floor(Math.random() * colors.length)]
       }
-    };
-    
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    // Mouse move handler
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseRef.current.x = e.clientX - rect.left;
-      mouseRef.current.y = e.clientY - rect.top;
-    };
-
-    if (mouseInteraction) {
-      canvas.addEventListener("mousemove", handleMouseMove);
+      // fallback to random RGB
+      return `rgba(${Math.ceil(Math.random() * 255)}, ${Math.ceil(
+        Math.random() * 255
+      )}, ${Math.ceil(Math.random() * 255)}, ${opacity})`
     }
 
-    // Animation loop
+    const createBall = (fillColor: string, radius: number): Ball => ({
+      fillColor,
+      radius,
+      x: 0,
+      y: 0,
+      scaleX: 1,
+      scaleY: 1,
+      rotation: 0,
+      vx: 0,
+      vy: 0,
+      draw(ctx) {
+        ctx.save()
+        ctx.translate(this.x, this.y)
+        ctx.scale(this.scaleX, this.scaleY)
+        ctx.rotate(this.rotation)
+        ctx.fillStyle = this.fillColor
+        ctx.beginPath()
+        ctx.arc(0, 0, this.radius, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+      },
+    })
+
+    // Mouse interaction
+    const mouse = { x: W / 2, y: H / 2 }
+    const handleMouseMove = (e: MouseEvent) => {
+      mouse.x = e.pageX - canvas.offsetLeft
+      mouse.y = e.pageY - canvas.offsetTop
+    }
+    if (interactive) canvas.addEventListener("mousemove", handleMouseMove)
+
+    // Create balls
+    const balls: Ball[] = []
+    for (let i = 0; i < numBalls; i++) {
+      const ball = createBall(getRandomColor(), Math.random() * (maxRadius - minRadius) + minRadius)
+      ball.x = Math.random() * W
+      ball.y = Math.random() * H
+      ball.vx = (Math.random() * 2 - 1) * speed
+      ball.vy = (Math.random() * 2 - 1) * speed
+      balls.push(ball)
+    }
+
+    const updateBall = (ball: Ball) => {
+      // physics
+      ball.vy += gravity
+      ball.vx *= friction
+      ball.vy *= friction
+      ball.x += ball.vx
+      ball.y += ball.vy
+
+      // boundary bounce
+      if (ball.x + ball.radius > W) {
+        ball.x = W - ball.radius
+        ball.vx *= -bounceDamping
+      } else if (ball.x - ball.radius < 0) {
+        ball.x = ball.radius
+        ball.vx *= -bounceDamping
+      }
+      if (ball.y + ball.radius > H) {
+        ball.y = H - ball.radius
+        ball.vy *= -bounceDamping
+      } else if (ball.y - ball.radius < 0) {
+        ball.y = ball.radius
+        ball.vy *= -bounceDamping
+      }
+
+      // mouse attraction
+      if (followMouse) {
+        const dx = mouse.x - ball.x
+        const dy = mouse.y - ball.y
+        ball.vx += dx * 0.0005
+        ball.vy += dy * 0.0005
+      }
+    }
+
+    const enlargeBalls = (ball: Ball) => {
+      if (!interactive) return
+      const dx = mouse.x - ball.x
+      const dy = mouse.y - ball.y
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      if (distance < interactionRadius) {
+        ball.scaleX = ball.scaleY = interactionScale
+      } else if (distance < interactionRadius * 1.5) {
+        ball.scaleX = ball.scaleY = interactionScale * 0.6
+      } else {
+        ball.scaleX = ball.scaleY = 1
+      }
+    }
+
     const animate = () => {
-      timeRef.current += 0.016; // ~60fps
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      requestAnimationFrame(animate)
+      if (trailAlpha < 1) {
+        ctx.fillStyle = backgroundColor === "transparent"
+          ? `rgba(0, 0, 0, ${1 - trailAlpha})`
+          : backgroundColor
+        ctx.fillRect(0, 0, W, H)
+      } else {
+        ctx.clearRect(0, 0, W, H)
+      }
+      balls.forEach((ball) => {
+        enlargeBalls(ball)
+        updateBall(ball)
+        ball.draw(ctx)
+      })
+    }
 
-      ballsRef.current.forEach((ball) => {
-        // Apply gravity
-        ball.vy += gravity;
+    animate()
 
-        // Apply friction
-        ball.vx *= friction;
-        ball.vy *= friction;
+    const handleResize = () => {
+      W = canvas.width = window.innerWidth
+      H = canvas.height = window.innerHeight
+    }
+    window.addEventListener("resize", handleResize)
 
-        // Mouse interaction
-        if (mouseInteraction) {
-          const dx = mouseRef.current.x - ball.x;
-          const dy = mouseRef.current.y - ball.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < mouseRef.current.radius + ball.radius) {
-            const angle = Math.atan2(dy, dx);
-            const force = (mouseRef.current.radius + ball.radius - distance) / 10;
-            ball.vx -= Math.cos(angle) * force;
-            ball.vy -= Math.sin(angle) * force;
-          }
-        }
-
-        // Update position
-        ball.x += ball.vx;
-        ball.y += ball.vy;
-
-        // Bounce off walls
-        if (ball.x + ball.radius > canvas.width) {
-          ball.x = canvas.width - ball.radius;
-          ball.vx *= -0.8;
-        } else if (ball.x - ball.radius < 0) {
-          ball.x = ball.radius;
-          ball.vx *= -0.8;
-        }
-
-        if (ball.y + ball.radius > canvas.height) {
-          ball.y = canvas.height - ball.radius;
-          ball.vy *= -0.8;
-        } else if (ball.y - ball.radius < 0) {
-          ball.y = ball.radius;
-          ball.vy *= -0.8;
-        }
-
-        // Update pulse phase
-        if (enablePulse) {
-          ball.pulsePhase += 0.05;
-          const pulseAmount = Math.sin(ball.pulsePhase) * 0.2 + 1;
-          ball.radius = ball.baseRadius * pulseAmount;
-        }
-
-        // Update color shift
-        if (enableColorShift) {
-          ball.hue = (ball.hue + 0.5) % 360;
-        }
-
-        // Update trail
-        if (enableTrails) {
-          ball.trail.push({ x: ball.x, y: ball.y, alpha: 1 });
-          if (ball.trail.length > 15) {
-            ball.trail.shift();
-          }
-          // Fade trail
-          ball.trail.forEach((point, index) => {
-            point.alpha = index / ball.trail.length;
-          });
-        }
-
-        // Draw trail
-        if (enableTrails && ball.trail.length > 1) {
-          for (let i = 0; i < ball.trail.length - 1; i++) {
-            const point = ball.trail[i];
-            const nextPoint = ball.trail[i + 1];
-            const trailRadius = ball.baseRadius * 0.5 * point.alpha;
-            
-            ctx.beginPath();
-            ctx.arc(point.x, point.y, trailRadius, 0, Math.PI * 2);
-            if (enableColorShift) {
-              ctx.fillStyle = `hsla(${ball.hue}, 70%, 60%, ${point.alpha * 0.3})`;
-            } else {
-              ctx.fillStyle = ball.color.replace(')', `, ${point.alpha * 0.3})`).replace('rgb', 'rgba').replace('#', 'rgba(');
-            }
-            ctx.fill();
-          }
-        }
-
-        // Draw ball
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-        
-        // Apply color shift or use original color
-        if (enableColorShift) {
-          const gradient = ctx.createRadialGradient(
-            ball.x - ball.radius * 0.3,
-            ball.y - ball.radius * 0.3,
-            0,
-            ball.x,
-            ball.y,
-            ball.radius
-          );
-          gradient.addColorStop(0, `hsl(${ball.hue}, 80%, 70%)`);
-          gradient.addColorStop(1, `hsl(${ball.hue}, 70%, 50%)`);
-          ctx.fillStyle = gradient;
-        } else {
-          ctx.fillStyle = ball.color;
-        }
-        
-        ctx.fill();
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Add glow effect
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = enableColorShift ? `hsl(${ball.hue}, 70%, 60%)` : ball.color;
-      });
-
-      // Reset shadow for next frame
-      ctx.shadowBlur = 0;
-
-      animationFrameRef.current = requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    // Cleanup
     return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      if (mouseInteraction) {
-        canvas.removeEventListener("mousemove", handleMouseMove);
-      }
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [ballCount, colors, minRadius, maxRadius, gravity, friction, mouseInteraction, enablePulse, enableColorShift, enableTrails]);
+      if (interactive) canvas.removeEventListener("mousemove", handleMouseMove)
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [
+    numBalls,
+    backgroundColor,
+    colors,
+    opacity,
+    minRadius,
+    maxRadius,
+    speed,
+    bounceDamping,
+    gravity,
+    friction,
+    interactionRadius,
+    interactionScale,
+    interactive,
+    followMouse,
+    trailAlpha,
+  ])
 
   return (
     <canvas
       ref={canvasRef}
-      className={`w-full h-full ${className}`}
-      style={{ display: "block" }}
+      style={{
+        display: "block",
+        width: "100%",
+        height: "100%",
+        backgroundColor,
+      }}
     />
-  );
+  )
 }
