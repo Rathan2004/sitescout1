@@ -8,6 +8,10 @@ interface Ball {
   vy: number;
   radius: number;
   color: string;
+  baseRadius: number;
+  pulsePhase: number;
+  hue: number;
+  trail: Array<{ x: number; y: number; alpha: number }>;
 }
 
 interface BouncingBallsProps {
@@ -19,6 +23,9 @@ interface BouncingBallsProps {
   friction?: number;
   mouseInteraction?: boolean;
   className?: string;
+  enablePulse?: boolean;
+  enableColorShift?: boolean;
+  enableTrails?: boolean;
 }
 
 export function BouncingBalls({
@@ -30,11 +37,15 @@ export function BouncingBalls({
   friction = 0.99,
   mouseInteraction = true,
   className = "",
+  enablePulse = true,
+  enableColorShift = true,
+  enableTrails = true,
 }: BouncingBallsProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ballsRef = useRef<Ball[]>([]);
   const mouseRef = useRef({ x: 0, y: 0, radius: 100 });
   const animationFrameRef = useRef<number | undefined>(undefined);
+  const timeRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -51,13 +62,18 @@ export function BouncingBalls({
       ballsRef.current = [];
       for (let i = 0; i < ballCount; i++) {
         const radius = Math.random() * (maxRadius - minRadius) + minRadius;
+        const hue = Math.random() * 360;
         ballsRef.current.push({
           x: Math.random() * (canvas.width - radius * 2) + radius,
           y: Math.random() * (canvas.height - radius * 2) + radius,
           vx: (Math.random() - 0.5) * 4,
           vy: (Math.random() - 0.5) * 4,
           radius,
+          baseRadius: radius,
           color: colors[Math.floor(Math.random() * colors.length)],
+          pulsePhase: Math.random() * Math.PI * 2,
+          hue,
+          trail: [],
         });
       }
     };
@@ -78,6 +94,7 @@ export function BouncingBalls({
 
     // Animation loop
     const animate = () => {
+      timeRef.current += 0.016; // ~60fps
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       ballsRef.current.forEach((ball) => {
@@ -123,15 +140,81 @@ export function BouncingBalls({
           ball.vy *= -0.8;
         }
 
+        // Update pulse phase
+        if (enablePulse) {
+          ball.pulsePhase += 0.05;
+          const pulseAmount = Math.sin(ball.pulsePhase) * 0.2 + 1;
+          ball.radius = ball.baseRadius * pulseAmount;
+        }
+
+        // Update color shift
+        if (enableColorShift) {
+          ball.hue = (ball.hue + 0.5) % 360;
+        }
+
+        // Update trail
+        if (enableTrails) {
+          ball.trail.push({ x: ball.x, y: ball.y, alpha: 1 });
+          if (ball.trail.length > 15) {
+            ball.trail.shift();
+          }
+          // Fade trail
+          ball.trail.forEach((point, index) => {
+            point.alpha = index / ball.trail.length;
+          });
+        }
+
+        // Draw trail
+        if (enableTrails && ball.trail.length > 1) {
+          for (let i = 0; i < ball.trail.length - 1; i++) {
+            const point = ball.trail[i];
+            const nextPoint = ball.trail[i + 1];
+            const trailRadius = ball.baseRadius * 0.5 * point.alpha;
+            
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, trailRadius, 0, Math.PI * 2);
+            if (enableColorShift) {
+              ctx.fillStyle = `hsla(${ball.hue}, 70%, 60%, ${point.alpha * 0.3})`;
+            } else {
+              ctx.fillStyle = ball.color.replace(')', `, ${point.alpha * 0.3})`).replace('rgb', 'rgba').replace('#', 'rgba(');
+            }
+            ctx.fill();
+          }
+        }
+
         // Draw ball
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-        ctx.fillStyle = ball.color;
+        
+        // Apply color shift or use original color
+        if (enableColorShift) {
+          const gradient = ctx.createRadialGradient(
+            ball.x - ball.radius * 0.3,
+            ball.y - ball.radius * 0.3,
+            0,
+            ball.x,
+            ball.y,
+            ball.radius
+          );
+          gradient.addColorStop(0, `hsl(${ball.hue}, 80%, 70%)`);
+          gradient.addColorStop(1, `hsl(${ball.hue}, 70%, 50%)`);
+          ctx.fillStyle = gradient;
+        } else {
+          ctx.fillStyle = ball.color;
+        }
+        
         ctx.fill();
         ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
         ctx.lineWidth = 2;
         ctx.stroke();
+
+        // Add glow effect
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = enableColorShift ? `hsl(${ball.hue}, 70%, 60%)` : ball.color;
       });
+
+      // Reset shadow for next frame
+      ctx.shadowBlur = 0;
 
       animationFrameRef.current = requestAnimationFrame(animate);
     };
@@ -148,7 +231,7 @@ export function BouncingBalls({
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [ballCount, colors, minRadius, maxRadius, gravity, friction, mouseInteraction]);
+  }, [ballCount, colors, minRadius, maxRadius, gravity, friction, mouseInteraction, enablePulse, enableColorShift, enableTrails]);
 
   return (
     <canvas
