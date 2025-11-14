@@ -18,8 +18,6 @@ export default function Landing() {
   const [hireDialogOpen, setHireDialogOpen] = useState(false);
   const [registrationDialogOpen, setRegistrationDialogOpen] = useState(false);
   const [selectedHandlerType, setSelectedHandlerType] = useState<string>('');
-  const [showAllHandlers, setShowAllHandlers] = useState(false);
-  const approvedHandlers = useQuery(api.handlers.getApprovedHandlers, {});
 
   const handleHireClick = (handlerType: string) => {
     setSelectedHandlerType(handlerType);
