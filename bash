@@ -1,3 +1,1 @@
-npm i -g vercel
-vercel login
-vercel
+npx convex deploy
